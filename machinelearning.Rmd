@@ -1,0 +1,72 @@
+---
+title: "Identifying patterns in physical fitness"
+author: "Jimi Damon"
+date: "12/04/2016"
+output: html_document
+hitheme: tomorrow
+mode: selfcontained
+highlighter: highlight.js
+framework: io2012
+url:
+  assets: ../../assets
+  lib: ../../librariesNew
+widgets: mathjax
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='./figure/',
+                     warning=FALSE, message=FALSE)
+```
+
+
+```{r,echo=TRUE}
+library(ggplot2)
+library(caret)
+training <- read.csv("pml-training.csv")
+testing <-  read.csv("pml-testing.csv")
+```
+
+
+# First look at the data
+
+One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+
+## Explore the training data only
+
+The goal of your project is to predict the manner in which they did
+the exercise. This is the "classe" variable in the training set.
+
+
+Exploring the data I found the dimensions of the training data to be 
+```{r,echo=FALSE}
+dim(training)
+```
+Due, to the low number of distinct elements in the training data, I
+realized that I would need to use cross-validation to make appropriate
+use of the limited data.
+
+
+# You may use any of the other variables to predict with.
+
+
+# How I built my model
+
+<!--
+Simply, start basic caret example.
+
+-->
+
+
+
+
+# How I  used cross validation
+
+
+# Expected out of sample error is
+
+
+# Why I made the choices I did. 
+
+
+
+# Predicting 20 different test cases.
+
