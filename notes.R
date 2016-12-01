@@ -101,7 +101,80 @@ QAP(Benefit of using less variables in PCA,
 ALso SVD, singular value decomposition, matrix solutions
 
 
+Decision Trees
+
+QAP(Downside of Decision Tree problems,
+    LIST(tendency to overfit / esp without pruning,
+         Have high training variance: samples from the same population can
+         produce very different trees,
+         learn non-monotone relationships with generalized additive
+         models
+         )
+    )
+
+
+Advanced Methods
+
+- Reduce training variance with bagging / random forrests
+- 
+- 
+
+calcAUC <- function(predcol, outcol ) {
+    perf <- performance( predicton(predcol, outcol==pos ),'auc' )
+    as.numeric( perf@y.values )
+}
+
+
+QAP(AUC,LIST(Area under curve , performance of measure ))
+
+
+
+# Covariate creation
+
+library(ISLR); library(caret); data(Wage);
+inTrain <- createDataPartition(y=Wage$wage,
+                              p=0.7, list=FALSE)
+training <- Wage[inTrain,]; testing <- Wage[-inTrain,]
+
+# Dummy variable creation
+
+dummies <- dummyVars(wage ~ jobclass,data=training)
+head(predict(dummies,newdata=training))
+
+
+# Remove zero covariates
+nsv <- nearZeroVar(training,saveMetrics=TRUE)
+nsv
 
 
 
 
+# Ggplot with spline
+
+
+n <- 10
+d <- data.frame(x = 1:n, y = rnorm(n))
+ggplot(d,aes(x,y)) + geom_point() + geom_line(data=data.frame(spline(d, n=n*10)))
+
+
+#
+#
+n <- 10
+d <- data.frame(x = 1:n, y = rnorm(n))
+
+fm <- lm( y ~ bs(x,df=4),data=d)
+ggplot(d,aes(x,y)) + geom_point() + geom_line(data=data.frame(x=xx,y=predict(fm,xx)))
+
+ggplot(d,aes(x,y)) + geom_point() + geom_line(data=data.frame(x=xx,y=predict(lm( y ~ bs(x,df=4),data=d),xx)))
+
+
+# back to the training of spam
+x <- seq(from=min(training$age),to=max(training$age),by=0.1)
+xx <- data.frame(age=x)
+fm <- lm(wage ~ bs(age,df=3),data=training)
+predict(fm,xx)
+
+tmpdat <- data.frame(x=x,y=predict(fm,xx))
+qplot(training$age,training$wage )  + geom_line(data=tmpdat)
+# qplot(training$age,training$wage) + geom_line( data=data.frame(x=xx,y=predict(fm,xx)))
+Need to ggplot the points first
