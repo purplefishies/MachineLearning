@@ -1,5 +1,5 @@
 ---
-title: "Identifying patterns in physical fitness"
+title: "Identifying Performance of Dumbbell lifts from personal fitness sensors"
 author: "Jimi Damon"
 date: "12/04/2016"
 output: html_document
@@ -15,58 +15,106 @@ widgets: mathjax
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='./figure/',
                      warning=FALSE, message=FALSE)
+load("/home/jdamon/Projects/coursera_courses/machine_learning/.RData")
 ```
+# Background of the data
 
+One thing that people regularly do is quantify how much of a
+particular activity they do, but they rarely quantify how well they do
+it. In this project, your goal will be to use data from accelerometers
+on the belt, forearm, arm, and dumbell of 6 participants. They were
+asked to perform barbell lifts correctly and incorrectly in 5
+different ways.  
+
+The classifications for the various ways of lifing dumbbell was as
+follows:  Class 'A' corresponded to exactly following the specification for
+lifting dumbbell, class 'B' indicated throwing the elbows to the
+front, class 'C' indicated only lifting the dumbbell halfway, class
+'D' indicated lowering the dumbbell only halfway and class 'E'
+indicated throwing the hips to the front while performing a lift.
+
+# Reading the data
+
+I downloaded the training and testing datasets from the URL
+https://d396qusza40orc.cloudfront.net/predmachlearn, and saved them to
+my local directory. The files / data sets were called
+"pml-training.csv" and "pml-testing.csv".
 
 ```{r,echo=TRUE}
 library(ggplot2)
 library(caret)
+library(randomForest); 
 training <- read.csv("pml-training.csv")
-testing <-  read.csv("pml-testing.csv")
+testing <- read.csv("pml-testing.csv")
 ```
-
-
-# First look at the data
-
-One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
-
-## Explore the training data only
-
-The goal of your project is to predict the manner in which they did
-the exercise. This is the "classe" variable in the training set.
-
 
 Exploring the data I found the dimensions of the training data to be 
 ```{r,echo=FALSE}
 dim(training)
 ```
-Due, to the low number of distinct elements in the training data, I
-realized that I would need to use cross-validation to make appropriate
-use of the limited data.
 
 
-# You may use any of the other variables to predict with.
+# Data cleaning
+
+I began examining the data and discovered that there were numerous 
+columns that contained NA values ( i.e. kurtosis_roll_belt ) . In addition, there were a number of
+variables as well that had the same value repeated for the length of
+the data frame ( i.e. new_window ). So, I decided that my first method for cleaning the
+data was to first remove the zero variance elements and then to remove
+the columns that corresponded to the timestamps and indices that had
+nothing to do with the training or method of lifting.
+
+```{r,echo=TRUE}
+nzv_cols <- nearZeroVar( training)
+modtraining <- training[,-nzv_cols]
+oknames <- names(modtraining)[colSums(is.na(modtraining)) == 0]
+nnames <- oknames[grep(".*(num_window|X|timestamp|user_name).*",oknames,invert=TRUE)]
+nnames
+```
+
+# Formula creation
+
+Now I was left with a new variable nnames that contained the filtered
+list of names.  I then created a formula for these fields only.
+```{r,echo=TRUE}
+form <- as.formula(paste("classe ~ ",paste(nnames[-length(nnames)],collapse=" + ")))
+form
+```
+
+# Data segmentation
+
+```{r,echo=TRUE}
+set.seed(69)
+dataTrain <- createDataPartition(trainData$classe, p = 0.7, list = FALSE)
+train <- trainData[dataTrain,]
+valid <- trainData[-dataTrain,]
+```
+
+# Training and cross-validation
+
+I decided to use 5-fold cross-validation for my model due to the fact
+that it corresponds to a shorter simulation cycle. In addition, no
+data transformations were applied to the data as they are less
+important in non-linear model fitting like random forests.
 
 
-# How I built my model
-
-<!--
-Simply, start basic caret example.
-
--->
-
+```{r,echo=TRUE,eval=FALSE}
+set.seed(42)
+fit_rf <- train( form, data=train, method="rf", trControl=control ,
+                do.trace=TRUE )
+```
 
 
-
-# How I  used cross validation
+```{r,echo=FALSE}
+fit_rf <- mymodel
+print(fit_rf)
+```
 
 
 # Expected out of sample error is
 
-
-# Why I made the choices I did. 
-
-
+Estimate for this based on what ? 
 
 # Predicting 20 different test cases.
+
 
