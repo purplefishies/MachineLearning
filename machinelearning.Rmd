@@ -1,5 +1,5 @@
 ---
-title: "Identifying Performance of Dumbbell lifts from personal fitness sensors"
+title: "Identifying the Performance of Dumbbell Lifts from Personal Fitness Sensors"
 author: "Jimi Damon"
 date: "12/04/2016"
 output: html_document
